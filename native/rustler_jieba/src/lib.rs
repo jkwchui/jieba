@@ -14,8 +14,9 @@ fn split_custom(text: String, dict_path: String) -> Vec<String> {
     return match File::open(dict_path) {
       Ok(f) => {
         let mut reader = BufReader::new(f);
-        return match Jieba::with_dict(&mut reader) {
-          Ok(jieba) => jieba.cut(&text, true).into_iter().map(|s| s.to_string()).collect(),
+        let mut jieba = Jieba::new();
+        return match jieba.load_dict(&mut reader) {
+          Ok(_) => jieba.cut(&text, true).into_iter().map(|s| s.to_string()).collect(),
           Err(err) => vec!(err.to_string())
         };
       },
@@ -23,4 +24,4 @@ fn split_custom(text: String, dict_path: String) -> Vec<String> {
     };
 }
 
-rustler::init!("Elixir.Jieba", [split]);
+rustler::init!("Elixir.Jieba", [split, split_custom]);
