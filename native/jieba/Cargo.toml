@@ -1,0 +1,14 @@
+[package]
+name = "jieba"
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[lib]
+name = "jieba"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.31.0"
+jieba-rs = "0.6"
