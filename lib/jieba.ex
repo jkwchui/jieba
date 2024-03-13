@@ -4,19 +4,17 @@ defmodule Jieba do
   """
 
   @doc """
-  Hello world.
+  Wrapper for jieba_rs, the rust Jieba implementation.
 
   ## Examples
 
-      iex> Jieba.hello()
-      :world
+      iex> Jieba.split("呢個係乜嘢呀")
 
   """
   use Rustler,
     otp_app: :jieba, # must match the name of the project in `mix.exs`
-    crate: :jieba # must match the name of the crate in `native/jieba/Cargo.toml`
+    crate: :rustler_jieba # must match the name of the crate in `native/jieba/Cargo.toml`
 
-  def add(_arg1, _arg2), do: :erlang.nif_error(:nif_not_loaded)
   def split(_arg1), do: :erlang.nif_error(:nif_not_loaded)
 
 end

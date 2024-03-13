@@ -1,11 +1,11 @@
 [package]
-name = "jieba"
+name = "rustler_jieba"
 version = "0.1.0"
 authors = []
 edition = "2021"
 
 [lib]
-name = "jieba"
+name = "rustler_jieba"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 
