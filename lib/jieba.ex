@@ -42,9 +42,9 @@ defmodule Jieba do
   a Rust implementation of the Python [Jieba](https://github.com/fxsjy/jieba)
   Chinese Word Segmentation library.
 
-  This module directly mostly projects the Rust API into Elixir with an
-  object-oriented imperative API with very thin syntactic sugar. Where possible,
-  it attempts to preserve functional behavior but this is not possible always,
+  This module directly projects the Rust API into Elixir, with thin syntactic
+  sugar over an object-oriented imperative API. Where possible,
+  it attempts to preserve functional behavior but this is not always possible,
   especially with the `load_dict/2` interface.
   """
 
@@ -64,12 +64,12 @@ defmodule Jieba do
         }
 
   @doc """
-  Creates an initializes new Jieba instance.
+  Creates and initializes new Jieba instance.
 
-  This is a convenience wrapper that avoids the need to touch the imperative load_dict/2
+  This is a convenience wrapper that avoids the need to touch the imperative `load_dict/2`
   API allowing for a more functional calling style.
 
-  Returns {:ok, jieba} or {:error, reason}
+  Returns `{:ok, jieba}` or `{:error, reason}`
 
   ## Examples
 
@@ -107,11 +107,11 @@ defmodule Jieba do
   end
 
   @doc """
-  Creates an initializes new Jieba instance using new/2.
+  Creates and initializes new Jieba instance using `new/2`.
 
-  Returns Jieba instance.
+  Returns `Jieba` instance.
 
-  Raises Jieba.JiebaError on error.
+  Raises `Jieba.JiebaError` on error.
 
   ## Examples
       iex> jieba = Jieba.new!(use_default: false)
@@ -125,20 +125,20 @@ defmodule Jieba do
     end
   end
 
-  # Since the new/3 convenience wrapper plus default options captures all
+  # Since the `new/3` convenience wrapper plus default options captures all
   # the functionality this is private. However this is still needed to
-  # implement new/3.
+  # implement `new/3`.
   defp native_new(), do: :erlang.nif_error(:nif_not_loaded)
 
-  # Creates an initializes new Jieba instance with an empty dictionary.
+  # Creates and initializes new `Jieba` instance with an empty dictionary.
   #
-  # Returns Jieba instance.
+  # Returns `Jieba` instance.
   defp native_empty(), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
-  Makes another Jieba with the same dictionary state.
+  Makes another `Jieba` with the same dictionary state.
 
-  Returns Jieba instance.
+  Returns `Jieba` instance.
 
   ## Examples
 
@@ -148,20 +148,20 @@ defmodule Jieba do
   def clone(_jieba), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
-  Merges the entries in `_dict_path` to the current native Jieba instance
+  Merges the entries in `_dict_path` to the current native `Jieba` instance
 
   This is an imperative function and will modify the underlying state of the
-  Jieba instance.  The function will return a new Jieba that has the
+  `Jieba` instance.  The function will return a new `Jieba` that has the
   `Jieba.dict_paths` field updated. However, since both the original
-  input object and the returned object will share a native jieba instance,
+  input object and the returned object will share a native `Jieba` instance,
   they will both be altered even if the `dict_paths` field of the original
   object is left untouched.  The original object should be discarded after
   use.
 
-  If you wish to keep the original Jieba instance, use `clone/1` to make
+  If you wish to keep the original `Jieba` instance, use `clone/1` to make
   a copy that can be preserved.
 
-  Returns `(:ok, rust_jieba)`
+  Returns `{:ok, rust_jieba}`
 
   ## Examples
 
@@ -200,13 +200,13 @@ defmodule Jieba do
   def load_dict(_jieba, _dict_path), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
-  Merges the entries in `dict_path` to the current native Jieba instance using load_dict/2.
+  Merges the entries in `dict_path` to the current native `Jieba` instance using `load_dict/2`.
 
-  Please see load_dict/2 for caveats about imperative behavior.
+  Please see `load_dict/2` for caveats about imperative behavior.
 
-  Returns Jieba instance with merged dictionary.
+  Returns `Jieba` instance with merged dictionary.
 
-  Raises Jieba.JiebaError on error.
+  Raises `Jieba.JiebaError` on error.
 
   ## Examples
       iex> jieba = Jieba.new!()
@@ -224,11 +224,11 @@ defmodule Jieba do
 
   @doc """
   Given a new segment, this attempts to guess the frequency of the segment.
-  It is used by `add_word()` if no `freq` is given.
+  It is used by `add_word/4` if no `freq` is given.
 
-  This can be used to examine the frequencies of the existing table which
+  This can be used to examine the frequencies of the existing table, which
   can be helpful for tuning or even scaling datasets for dialects of Chinese
-  without as much corpus data.  For example, if you had a small 粵語 dataset,
+  without as much corpus data.  For example, if you had a small 粵語 (Yue) dataset,
   you could look up common characters like 雨，車，窗 that are not likely to
   have a huge frequency divergence (as opposed to things like 他 or 地 which
   while frequent are far more used in some dialects), find the average delta
@@ -254,7 +254,7 @@ defmodule Jieba do
   @doc """
   Adds a segment to the dictionary with an optional frequency or tag.
 
-  If no frequency is given, `suggest_freq()` is used to guess the frequency.
+  If no frequency is given, `suggest_freq/2` is used to guess the frequency.
   This can be used to prevent over-segmentation.
 
   Returns 2434 (frequency of the added segment)
@@ -291,7 +291,7 @@ defmodule Jieba do
 
   @doc """
   Uses Rust-side, process-global, Jieba instance to break a sentence into a
-  vector of segments without hmm disabled.
+  vector of segments without HMM disabled.
 
   This method is not guaranteed to be thread-safe on the rust-side since the
   Jieba_rs API does specify thread-safety guarantees on multiple calls to cut.
@@ -299,7 +299,7 @@ defmodule Jieba do
   Also, this API does not allow for loading custom dictionaries and the
   disabling of hmm often yields over-segmentation.
 
-  Prefer cut/3 instead.
+  Prefer `cut/3` instead.
 
   Returns `["李小福", "是"]`
 
@@ -340,7 +340,7 @@ defmodule Jieba do
   search engine keyword matching.  This tends to produce shorted segments
   that are more likely to produce a keyword match. For example,
   `"中国科学院"` will produce `["中国", "科学", "学院", "科学院", "中国科学院"]`
-  whereas with `cut()`, it will just produce `["中国科学院"]`
+  whereas with `cut/3`, it will just produce `["中国科学院"]`
   It is possible (and likely) that phrases will be repeated.
 
   Returns `["中国", "科学", "学院", "科学院", "中国科学院"]`
@@ -357,10 +357,10 @@ defmodule Jieba do
   def cut_for_search(_jieba, _sentence, _hmm), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
-  Takes a sentence, performs `cut()`, and then produces a vector of `Token` structs that
+  Takes a sentence, performs `cut/3`, and then produces a vector of `Token` structs that
   indicate where in the sentence the segment comes from.
 
-  The tokenization mode can be one of :default or :search.
+  The tokenization mode can be one of `:default` or `:search`.
 
   Returns `[
               %{start: 0, __struct__: Jieba.Token, word: "李小福"},
@@ -388,7 +388,7 @@ defmodule Jieba do
   def tokenize(_jieba, _sentence, _mode, _hmm), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
-  Takes a sentence, performs `cut()`, and then produces a vector of `Tag` structs that
+  Takes a sentence, performs `cut/3`, and then produces a vector of `Tag` structs that
   label each segment with a tag -- usually the part of speech.
 
   Returns `[
@@ -463,9 +463,9 @@ defmodule Jieba do
   @doc """
   Uses TFIDF algorithm to extract tags.
 
-  Returns list of Jieba.Keyword
+  Returns list of `Jieba.Keyword`
 
-  Raises Jieba.JiebaError on error.
+  Raises `Jieba.JiebaError` on error.
 
   ## Examples
       iex> jieba = Jieba.new!()
@@ -487,16 +487,16 @@ defmodule Jieba do
   end
 
   @doc """
-  Takes a sentence, and attempts to extract the top_k keywords based on TextRank
+  Takes a sentence, and attempts to extract the top_k keywords based on `TextRank`
   ranking.
 
-  This constructs a new TextRank struct each call. If there is no `_stop_words`,
+  This constructs a new `TextRank` struct each call. If there is no `_stop_words`,
   this is lightweight. However, if there is, it will reconstruct the internal
   data structure per call.
 
   We cannot do better yet because the Jieba-RS interface confusingly requires
-  that the TextRank struct must be bound to a stack-scoped Jieba object. With
-  the Elixir bridge. the Jieba object is actually dynamically allocated and
+  that the `TextRank` struct must be bound to a stack-scoped `Jieba` object. With
+  the Elixir bridge, the Jieba object is actually dynamically allocated and
   shared with a ResourceARC and a Mutex. To do this more properly would
   require the Jieba-RS project redesign the TextRank interface so it takes
   `jieba` on the `extract_keyword()` method and not as in the `new()` method.
@@ -523,9 +523,9 @@ defmodule Jieba do
   @doc """
   Uses TextRank algorithm to extract tags.
 
-  Returns list of Jieba.Keyword
+  Returns list of `Jieba.Keyword`
 
-  Raises Jieba.JiebaError on error.
+  Raises `Jieba.JiebaError` on error.
 
   ## Examples
       iex> jieba = Jieba.new!()
